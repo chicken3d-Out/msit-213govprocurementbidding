@@ -1,0 +1,41 @@
+Run started:2026-05-30 04:36:15.309297+00:00
+
+Test results:
+>> Issue: [B104:hardcoded_bind_all_interfaces] Possible binding to all interfaces.
+   Severity: Medium   Confidence: Medium
+   CWE: CWE-605 (https://cwe.mitre.org/data/definitions/605.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b104_hardcoded_bind_all_interfaces.html
+   Location: .\bids\views.py:16:43
+15	        return x_forwarded.split(',')[0].strip()
+16	    return request.META.get('REMOTE_ADDR', '0.0.0.0')
+17	
+
+--------------------------------------------------
+>> Issue: [B105:hardcoded_password_string] Possible hardcoded password: 'django-insecure-*44zc_x_(&r9+=&3awurujq%%4^$5v87rmf=^@7v(8co-xa(uq'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html
+   Location: .\procurement_platform\settings_old.py:23:13
+22	# SECURITY WARNING: keep the secret key used in production secret!
+23	SECRET_KEY = 'django-insecure-*44zc_x_(&r9+=&3awurujq%%4^$5v87rmf=^@7v(8co-xa(uq'
+24	
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 1030
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 1
+		Medium: 1
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 2
+		High: 0
+Files skipped (0):
