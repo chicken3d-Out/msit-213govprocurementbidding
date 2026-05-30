@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load procurement_tags %}
+{% block title %}Procurements — GovProcure{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Procurement Postings</h2>
+  {% if user.is_vendor %}
+  <div class="btn-group">
+    <a href="?view=all" class="btn btn-sm {% if toggle == 'all' %}btn-dark{% else %}btn-outline-dark{% endif %}">All</a>
+    <a href="?view=mine" class="btn btn-sm {% if toggle == 'mine' %}btn-dark{% else %}btn-outline-dark{% endif %}">Mine</a>
+  </div>
+  {% endif %}
+</div>
+<div class="row g-3">
+  {% for p in procurements %}
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <small class="text-muted">{{ p.reference_no }}</small>
+          <span class="status-{{ p.status }}">{{ p.get_status_display }}</span>
+        </div>
+        <h5 class="card-title mt-1"><a href="{% url 'procurement:detail' p.pk %}" class="text-decoration-none text-dark">{{ p.title }}</a></h5>
+        <p class="text-muted mb-1">Budget: {{ p.budget|currency_php }}</p>
+        <p class="text-muted mb-0">Closes: {% countdown p.deadline %}{% if p.is_blind %} <span class="badge bg-secondary">Blind</span>{% endif %}</p>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col"><p class="text-muted">No procurements found.</p></div>
+  {% endfor %}
+</div>
+{% endblock %}

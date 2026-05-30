@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load procurement_tags %}
+{% block title %}{{ proc.reference_no }} — GovProcure{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-8">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'procurement:list' %}">Procurements</a></li><li class="breadcrumb-item active">{{ proc.reference_no }}</li></ol></nav>
+    <h2>{{ proc.title }}</h2>
+    <p class="text-muted">{{ proc.reference_no }} &middot; <span class="status-{{ proc.status }}">{{ proc.get_status_display }}</span></p>
+    <p>{{ proc.description }}</p>
+    <div class="row g-3 mb-4">
+      <div class="col-sm-4"><div class="card text-center p-3"><small class="text-muted">Budget</small><br><strong>{{ proc.budget|currency_php }}</strong></div></div>
+      <div class="col-sm-4"><div class="card text-center p-3"><small class="text-muted">Deadline</small><br><strong>{% countdown proc.deadline %}</strong></div></div>
+      <div class="col-sm-4"><div class="card text-center p-3"><small class="text-muted">Bids</small><br><strong>{{ proc|bid_count }}</strong></div></div>
+    </div>
+    {% if proc.is_blind %}
+    <div class="alert alert-secondary">🔒 Bids are sealed until <strong>{{ proc.reveal_date }}</strong></div>
+    {% endif %}
+    {% if user.is_authenticated and user.is_vendor and proc.is_accepting_bids %}
+      {% if user_bid %}<div class="alert alert-success">✅ You have submitted a bid. <a href="{% url 'bids:withdraw' user_bid.pk %}">Withdraw</a></div>
+      {% else %}<a href="{% url 'bids:submit' proc.pk %}" class="btn btn-primary">Submit Bid</a>{% endif %}
+    {% endif %}
+    {% if user.is_authenticated %}
+      {% if user.is_agency or user.is_staff %}
+        {% if proc.status == 'CLOSED' and not proc.is_blind %}
+          <a href="{% url 'procurement:award' proc.pk %}" class="btn btn-success mt-2">Award Contract</a>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+    {% if bids %}
+    <h5 class="mt-4">Submitted Bids</h5>
+    <table class="table table-sm">
+      <thead><tr><th>Vendor</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+      <tbody>{% for bid in bids %}<tr><td>{{ bid.vendor.company_name }}</td><td>{{ bid.amount|currency_php }}</td><td>{{ bid.get_status_display }}</td><td><a href="{% url 'bids:open' bid.pk %}" class="btn btn-sm btn-outline-secondary">Open</a></td></tr>{% endfor %}</tbody>
+    </table>
+    {% endif %}
+    {% if proc.status == 'AWARDED' %}
+    <div class="alert alert-info mt-3">🏆 Contract awarded to <strong>{{ proc.contract.awarded_to.company_name }}</strong> for {{ proc.contract.contract_value|currency_php }}</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

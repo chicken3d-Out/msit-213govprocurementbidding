@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load procurement_tags %}
+{% block title %}Bid Detail — {{ proc.reference_no }}{% endblock %}
+{% block content %}
+<h2>Bid Detail</h2>
+<p class="text-muted">{{ proc.reference_no }} — {{ proc.title }}</p>
+<div class="card p-4">
+  <p><strong>Vendor:</strong> {{ bid.vendor.company_name }}</p>
+  <p><strong>Amount:</strong> {{ bid.amount|currency_php }}</p>
+  <p><strong>Submitted:</strong> {{ bid.submitted_at }}</p>
+  <p><strong>Proposal:</strong> <a href="{{ bid.proposal.url }}">Download</a></p>
+</div>
+<a href="{% url 'procurement:detail' proc.pk %}" class="btn btn-outline-secondary mt-3">Back</a>
+{% endblock %}
